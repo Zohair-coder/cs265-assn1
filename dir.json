@@ -5,7 +5,7 @@
 		"directories": []
 	},
 	"other" : {
-		"files": ["a1-top", "bruh", "index.html"],
+		"files": ["a1-top", "index.html"],
 		"directories": ["Files", "Labs", "Lectures"]
 	}
 }
