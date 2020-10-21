@@ -1,0 +1,3 @@
+This program does account for hidden files. However, I have deliberately left out the "." and ".." directories from
+dir.json files since it seemed too obvious that they would be included. It is not too difficult to add this functionality
+back, so feel free to ask me to resubmit if you want that functionality included.

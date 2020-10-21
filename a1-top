@@ -37,8 +37,11 @@ function createJson()
     required_dirs=()
     # if README file exists, parse the index and required files:
     if test -f "$current_working_directory/README"; then
+    
         index=$(awk -F: '$1 == "index" {for (i=2; i<NF; i++) printf $i ", "; print $NF}' $current_working_directory/README)
+
         required_array=$(awk -F: '$1 == "required" {for (i=2; i<NF; i++) printf $i " "; print $NF}' $current_working_directory/README)
+
         #convert required_array(which is a string right now) to array
         required_array=($required_array)
 
