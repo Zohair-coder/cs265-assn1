@@ -54,16 +54,16 @@ function createJson()
             fi
         done
     fi
-        for files in $(ls "$current_working_directory")
+        for files in $(ls "$current_working_directory" -a)
         do
             if [ $(contains "${required_array[@]}" "$files") == "n" ]
             then
             # if the file is not in the required_array and is a directory, add to other_dirs.
-                if [ -d "$current_working_directory/$files" ]
+                if [ -d "$current_working_directory/$files" ] && [ "$files" != "." ] && [ "$files" != ".." ]
                 then
                     other_dirs+=("$files")
-                # if the file is not the index file or the dir.json file, add to other_files.
-                elif [ "$files" != "$index" ] && [ "$files" != "dir.json" ]
+                # if the file is not the ., .., index file or the dir.json file, add to other_files.
+                elif [ "$files" != "$index" ] && [ "$files" != "dir.json" ] && [ "$files" != "." ] && [ "$files" != ".." ]
                 then
                     other_files+=("$files")
                 fi

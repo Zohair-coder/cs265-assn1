@@ -6,6 +6,6 @@
 	},
 	"other" : {
 		"files": ["a1-top", "index.html"],
-		"directories": ["Files", "Labs", "Lectures"]
+		"directories": [".git", "Files", "Labs", "Lectures"]
 	}
 }
