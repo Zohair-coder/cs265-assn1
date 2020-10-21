@@ -18,7 +18,7 @@ function contains() {
 function quoteString() 
 {
     delim=''
-    for word in $1; do                   # rely on word splitting by shell
+    for word in $1; do                  
         delimited="$delimited$delim\"$word\""
         delim=", "
     done
@@ -67,13 +67,7 @@ function createJson()
                 fi
             fi
         done
-        # echo
-        # echo Current directory: $current_working_directory
-        # echo Required directories: ${required_dirs[@]}
-        # echo Required files: ${required_files[@]}
-        # echo Other files: ${other_files[@]}
-        # echo other_dirs: ${other_dirs[@]}
-        # echo
+
     
 
     required_dirs_string=$( IFS=$' '; echo "${required_dirs[*]}" )
