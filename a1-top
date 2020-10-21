@@ -41,27 +41,30 @@ function createJson()
 
         required_array=($required_array)
 
+        # if the file in the required array is a directory, add to required_dirs. Otherwise add to required_files
+        
+        for files in ${required_array[@]}
+        do
+            if [ -d "$current_working_directory/$files" ]
+            then
+                required_dirs+=("$files")
+            else
+                required_files+=("$files")
+            fi
+        done
+
         for files in $(ls "$current_working_directory")
         do
             
             # if the file being checked is in required array, sort it
-            if [ $(contains "${required_array[@]}" "$files") == "y" ]
+            if [ $(contains "${required_array[@]}" "$files") == "n" ]
             then
-                # if the file in the required array is a directory, add to required_dirs. Otherwise add to required_files
-                if [ -d "$current_working_directory/$files" ]
-                then
-                    required_dirs+=("$files")
-                else
-                    required_files+=("$files")
-                fi
-            
             # if the file is not in the required_array and is a directory, add to other_dirs.
-            else
                 if [ -d "$current_working_directory/$files" ]
                 then
                     other_dirs+=("$files")
                 # if the file is a directory, add to other_dirs
-                elif [ "$current_working_directory/$files" != "$index" ]
+                elif [ "$files" != "$index" ]
                 then
                     other_files+=("$files")
                 fi
