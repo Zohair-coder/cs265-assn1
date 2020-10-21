@@ -105,11 +105,11 @@ if (( "$#" == 1 )); then
 		dir="$1"
         startProgram $1
 	else
-		echo "That's not a valid directory."
+		echo "Invalid directory. Usage: ./a1-top [directory]"
 		exit 1
     fi
 elif (( "$#" > 1 )); then
-	echo "Too many arguments."
+	echo "Too many arguments. Usage: ./a1-top [directory]"
 	exit 2
 else
     startProgram .
