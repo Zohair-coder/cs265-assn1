@@ -1,0 +1,121 @@
+#!/bin/bash
+
+function contains() {
+    local n=$#
+    local value=${!n}
+    for ((i=1;i < $#;i++)) {
+        if [ "${!i}" == "${value}" ]; then
+            echo "y"
+            return 0
+        fi
+    }
+    echo "n"
+    return 1
+}
+
+
+
+function quoteString() 
+{
+    delim=''
+    for word in $1; do                   # rely on word splitting by shell
+        delimited="$delimited$delim\"$word\""
+        delim=", "
+    done
+    echo $delimited
+}
+
+function createJson()
+{
+    current_working_directory=$1
+    index=""
+    required_array=""
+    other_files=()
+    other_dirs=()
+    required_files=()
+    required_dirs=()
+    if test -f "$current_working_directory/README"; then
+        index=$(awk -F: '$1 == "index" {for (i=2; i<NF; i++) printf $i ", "; print $NF}' $current_working_directory/README)
+        required_array=$(awk -F: '$1 == "required" {for (i=2; i<NF; i++) printf $i " "; print $NF}' $current_working_directory/README)
+
+
+        required_array=($required_array)
+
+        for files in $(ls "$current_working_directory")
+        do
+            
+            # if the file being checked is in required array, sort it
+            if [ $(contains "${required_array[@]}" "$files") == "y" ]
+            then
+                # if the file in the required array is a directory, add to required_dirs. Otherwise add to required_files
+                if [ -d "$current_working_directory/$files" ]
+                then
+                    required_dirs+=("$files")
+                else
+                    required_files+=("$files")
+                fi
+            
+            # if the file is not in the required_array and is a directory, add to other_dirs.
+            else
+                if [ -d "$current_working_directory/$files" ]
+                then
+                    other_dirs+=("$files")
+                # if the file is a directory, add to other_dirs
+                elif [ "$current_working_directory/$files" != "$index" ]
+                then
+                    other_files+=("$files")
+                fi
+            fi
+        done
+        # echo
+        # echo Current directory: $current_working_directory
+        # echo Required directories: ${required_dirs[@]}
+        # echo Required files: ${required_files[@]}
+        # echo Other files: ${other_files[@]}
+        # echo other_dirs: ${other_dirs[@]}
+        # echo
+    fi
+    
+
+    required_dirs_string=$( IFS=$' '; echo "${required_dirs[*]}" )
+    required_files_string=$( IFS=$' '; echo "${required_files[*]}" )
+    other_dirs_string=$( IFS=$' '; echo "${other_dirs[*]}" )
+    other_files_string=$( IFS=$' '; echo "${other_files[*]}" )
+
+
+    required_dirs_string=$(quoteString "$required_dirs_string")
+    required_files_string=$(quoteString "$required_files_string")
+    other_dirs_string=$(quoteString "$other_dirs_string")
+    other_files_string=$(quoteString "$other_files_string")
+
+    printf '{\n\t"index" : "%s",\n\t"required" : {\n\t\t"files": [%s],\n\t\t"directories": [%s]\n\t},\n\t"other" : {\n\t\t"files": [%s],\n\t\t"directories": [%s]\n\t}\n}\n' "$index" "$required_files_string" "$required_dirs_string" "$other_files_string" "$other_dirs_string" >$current_working_directory/dir.json
+
+
+}
+
+function startProgram() {
+    for current_working_directory in `find $1 -type d`
+    do
+        createJson $current_working_directory
+    done
+
+}
+
+if (( "$#" == 1 )); then
+	if [[ -d $1 ]]; then
+		dir="$1"
+        startProgram $1
+	else
+		echo "That's not a valid directory."
+		exit 1
+    fi
+elif (( "$#" > 1 )); then
+	echo "Too many arguments."
+	exit 2
+else
+    startProgram .
+fi
+
+
+
+
