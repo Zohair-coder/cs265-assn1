@@ -64,7 +64,7 @@ function createJson()
                 then
                     other_dirs+=("$files")
                 # if the file is a directory, add to other_dirs
-                elif [ "$files" != "$index" ]
+                elif [ "$files" != "$index" ] && [ "$files" != "dir.json" ]
                 then
                     other_files+=("$files")
                 fi

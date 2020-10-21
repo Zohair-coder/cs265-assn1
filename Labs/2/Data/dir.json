@@ -5,7 +5,7 @@
 		"directories": []
 	},
 	"other" : {
-		"files": ["a", "dir.json", "kurt.xml", "README"],
+		"files": ["a", "kurt.xml", "README"],
 		"directories": []
 	}
 }
