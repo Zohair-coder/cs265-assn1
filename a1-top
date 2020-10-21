@@ -37,8 +37,6 @@ function createJson()
     if test -f "$current_working_directory/README"; then
         index=$(awk -F: '$1 == "index" {for (i=2; i<NF; i++) printf $i ", "; print $NF}' $current_working_directory/README)
         required_array=$(awk -F: '$1 == "required" {for (i=2; i<NF; i++) printf $i " "; print $NF}' $current_working_directory/README)
-
-
         required_array=($required_array)
 
         # if the file in the required array is a directory, add to required_dirs. Otherwise add to required_files
@@ -52,10 +50,9 @@ function createJson()
                 required_files+=("$files")
             fi
         done
-
+    fi
         for files in $(ls "$current_working_directory")
         do
-            
             # if the file being checked is in required array, sort it
             if [ $(contains "${required_array[@]}" "$files") == "n" ]
             then
@@ -77,7 +74,6 @@ function createJson()
         # echo Other files: ${other_files[@]}
         # echo other_dirs: ${other_dirs[@]}
         # echo
-    fi
     
 
     required_dirs_string=$( IFS=$' '; echo "${required_dirs[*]}" )
