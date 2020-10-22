@@ -4,7 +4,8 @@ function contains() {
     local n=$#
     local value=${!n}
     for ((i=1;i < $#;i++)) {
-        if [ "${!i}" == "${value}" ]; then
+        if [ "${!i}" == "${value}" ]
+        then
             echo "y"
             return 0
         fi
@@ -28,6 +29,7 @@ function quoteString()
 function createJson()
 {
     # Initialize variables
+
     current_working_directory=$1
     index=""
     required_array=""
@@ -35,14 +37,17 @@ function createJson()
     other_dirs=()
     required_files=()
     required_dirs=()
+
     # if README file exists, parse the index and required files:
+
     if test -f "$current_working_directory/README"; then
-    
+
         index=$(awk -F: '$1 == "index" {for (i=2; i<NF; i++) printf $i ", "; print $NF}' $current_working_directory/README)
 
         required_array=$(awk -F: '$1 == "required" {for (i=2; i<NF; i++) printf $i " "; print $NF}' $current_working_directory/README)
 
         #convert required_array(which is a string right now) to array
+
         required_array=($required_array)
 
         # if the file in the required array is a directory, add to required_dirs. Otherwise add to required_files
@@ -57,21 +62,21 @@ function createJson()
             fi
         done
     fi
-        for files in $(ls "$current_working_directory" -a)
-        do
-            if [ $(contains "${required_array[@]}" "$files") == "n" ]
+    for files in $(ls "$current_working_directory" -a)
+    do
+        if [ $(contains "${required_array[@]}" "$files") == "n" ]
+        then
+        # if the file is not in the required_array and is a directory, add to other_dirs.
+            if [ -d "$current_working_directory/$files" ] && [ "$files" != "." ] && [ "$files" != ".." ]
             then
-            # if the file is not in the required_array and is a directory, add to other_dirs.
-                if [ -d "$current_working_directory/$files" ] && [ "$files" != "." ] && [ "$files" != ".." ]
-                then
-                    other_dirs+=("$files")
-                # if the file is not the ., .., index file or the dir.json file, add to other_files.
-                elif [ "$files" != "$index" ] && [ "$files" != "dir.json" ] && [ "$files" != "." ] && [ "$files" != ".." ]
-                then
-                    other_files+=("$files")
-                fi
+                other_dirs+=("$files")
+            # if the file is not the ., .., index file or the dir.json file, add to other_files.
+            elif [ "$files" != "$index" ] && [ "$files" != "dir.json" ] && [ "$files" != "." ] && [ "$files" != ".." ]
+            then
+                other_files+=("$files")
             fi
-        done
+        fi
+    done
 
     
     # convert all arrays to strings
@@ -100,15 +105,18 @@ function startProgram() {
 
 }
 
-if (( "$#" == 1 )); then
-	if [[ -d $1 ]]; then
+if (( "$#" == 1 ))
+then
+	if [[ -d $1 ]]
+    then
 		dir="$1"
         startProgram $1
 	else
 		echo "Invalid directory. Usage: ./a1-top [directory]"
 		exit 1
     fi
-elif (( "$#" > 1 )); then
+elif (( "$#" > 1 ))
+then
 	echo "Too many arguments. Usage: ./a1-top [directory]"
 	exit 2
 else
