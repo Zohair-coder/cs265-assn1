@@ -48,7 +48,7 @@ function createJson()
 
         #convert required_array(which is a string right now) to array
 
-        required_array=($required_array)
+        read -r -a required_array <<< "$required_array"
 
         # if the file in the required array is a directory, add to required_dirs. Otherwise add to required_files
         
