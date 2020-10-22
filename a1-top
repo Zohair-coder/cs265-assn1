@@ -23,7 +23,7 @@ function quoteString()
         delimited="$delimited$delimiter\"$word\""
         delimiter=", "
     done
-    echo $delimited
+    echo "$delimited"
 }
 
 function createJson()
@@ -42,9 +42,9 @@ function createJson()
 
     if test -f "$current_working_directory/README"; then
 
-        index=$(awk -F: '$1 == "index" {for (i=2; i<NF; i++) printf $i ", "; print $NF}' $current_working_directory/README)
+        index=$(awk -F: '$1 == "index" {for (i=2; i<NF; i++) printf $i ", "; print $NF}' "$current_working_directory"/README)
 
-        required_array=$(awk -F: '$1 == "required" {for (i=2; i<NF; i++) printf $i " "; print $NF}' $current_working_directory/README)
+        required_array=$(awk -F: '$1 == "required" {for (i=2; i<NF; i++) printf $i " "; print $NF}' "$current_working_directory"/README)
 
         #convert required_array(which is a string right now) to array
 
@@ -52,7 +52,7 @@ function createJson()
 
         # if the file in the required array is a directory, add to required_dirs. Otherwise add to required_files
         
-        for files in ${required_array[@]}
+        for files in "${required_array[@]}"
         do
             if [ -d "$current_working_directory/$files" ]
             then
@@ -64,7 +64,7 @@ function createJson()
     fi
     for files in $(ls "$current_working_directory" -a)
     do
-        if [ $(contains "${required_array[@]}" "$files") == "n" ]
+        if [ "$(contains "${required_array[@]}" "$files")" == "n" ]
         then
         # if the file is not in the required_array and is a directory, add to other_dirs.
             if [ -d "$current_working_directory/$files" ] && [ "$files" != "." ] && [ "$files" != ".." ]
@@ -92,15 +92,15 @@ function createJson()
     other_files_string=$(quoteString "$other_files_string")
 
     # write to JSON file
-    printf '{\n\t"index" : "%s",\n\t"required" : {\n\t\t"files": [%s],\n\t\t"directories": [%s]\n\t},\n\t"other" : {\n\t\t"files": [%s],\n\t\t"directories": [%s]\n\t}\n}\n' "$index" "$required_files_string" "$required_dirs_string" "$other_files_string" "$other_dirs_string" >$current_working_directory/dir.json
+    printf '{\n\t"index" : "%s",\n\t"required" : {\n\t\t"files": [%s],\n\t\t"directories": [%s]\n\t},\n\t"other" : {\n\t\t"files": [%s],\n\t\t"directories": [%s]\n\t}\n}\n' "$index" "$required_files_string" "$required_dirs_string" "$other_files_string" "$other_dirs_string" >"$current_working_directory"/dir.json
 
 
 }
 
 function startProgram() {
-    for current_working_directory in `find $1 -type d`
+    for current_working_directory in $(find "$1" -type d)
     do
-        createJson $current_working_directory
+        createJson "$current_working_directory"
     done
 
 }
@@ -109,8 +109,7 @@ if (( "$#" == 1 ))
 then
 	if [[ -d $1 ]]
     then
-		dir="$1"
-        startProgram $1
+        startProgram "$1"
 	else
 		echo "Invalid directory. Usage: ./a1-top [directory]"
 		exit 1
